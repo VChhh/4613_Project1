@@ -39,6 +39,7 @@ public:
 	Puzzle(int aWeight, std::vector<int>& aInit, std::vector<int>& aGoal);
 	Puzzle(const Puzzle&);
 	bool isVisited(State&);
+	void findNeighbors(std::vector<State>&);
 	std::string solve();
 	
 private:

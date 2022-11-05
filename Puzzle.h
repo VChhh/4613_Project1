@@ -18,7 +18,7 @@ struct State {
 	int heuristicValue;
 	int stepTaken;
 	int fValue;
-	std::vector<Chess> board;
+	std::vector<Chess> board; // 0-15
 	std::string path;
 
 	State() : heuristicValue(16), stepTaken(0), fValue(0), path("") {};
@@ -46,8 +46,8 @@ private:
 	std::priority_queue<State, std::vector<State>, CompareState> queue;
 	std::vector<State> visited;
 	State cur;
-	State goal; // 0 - 15 represents the position on the board
-	int weight;
+	State goal;
+	float weight;
 	
 };
 

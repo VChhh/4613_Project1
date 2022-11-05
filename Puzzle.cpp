@@ -61,9 +61,11 @@ bool Puzzle::isVisited(State& p1) {
 
 void Puzzle::findNeighbors(vector<State>& nbs) {
 	bool canL = true, canR = true, canU = true, canD = true;
-	int x0, y0;
+	int x0 = 0, y0 = 0;
 	// g(n)
 	int g = cur.stepTaken + 1;
+	string newPath = cur.path;
+
 
 	// find empty
 	for (Chess& c : cur.board) {
@@ -79,19 +81,43 @@ void Puzzle::findNeighbors(vector<State>& nbs) {
 	}
 	// left
 	if (canL) {
-
+		State lState(cur);
+		swap(lState.board[x0 + y0 * 4], lState.board[x0 + y0 * 4 + 1]);
+		lState.stepTaken = g;
+		lState.calculateHeuristic(goal);
+		lState.fValue = lState.stepTaken + weight * lState.heuristicValue;
+		lState.path += "L";
+		queue.push(lState);
 	}
 	// right
 	if (canR) {
-
+		State RState(cur);
+		swap(RState.board[x0 + y0 * 4], RState.board[x0 + y0 * 4 - 1]);
+		RState.stepTaken = g;
+		RState.calculateHeuristic(goal);
+		RState.fValue = RState.stepTaken + weight * RState.heuristicValue;
+		RState.path += "R";
+		queue.push(RState);
 	}
 	// up
 	if (canU) {
-
+		State UState(cur);
+		swap(UState.board[x0 + y0 * 4], UState.board[x0 + y0 * 4 + 4]);
+		UState.stepTaken = g;
+		UState.calculateHeuristic(goal);
+		UState.fValue = UState.stepTaken + weight * UState.heuristicValue;
+		UState.path += "U";
+		queue.push(UState);
 	}
 	// down
 	if (canD) {
-
+		State DState(cur);
+		swap(DState.board[x0 + y0 * 4], DState.board[x0 + y0 * 4 - 1]);
+		DState.stepTaken = g;
+		DState.calculateHeuristic(goal);
+		DState.fValue = DState.stepTaken + weight * DState.heuristicValue;
+		DState.path += "D";
+		queue.push(DState);
 	}
 }
 
@@ -107,7 +133,7 @@ string Puzzle::solve() {
 		queue.pop();
 		// TODO: add states into neighbors
 		std::vector<State> neighbors;
-
+		findNeighbors(neighbors);
 
 		// add unvisited neighbors into priority queue
 		for (State& n : neighbors) {

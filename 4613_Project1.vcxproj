@@ -145,6 +145,16 @@
   <ItemGroup>
     <ClInclude Include="Puzzle.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="input\Input1.txt" />
+    <Text Include="input\Input2.txt" />
+    <Text Include="input\Input3.txt" />
+    <Text Include="input\Input4.txt" />
+    <Text Include="input\Input5.txt" />
+    <Text Include="input\Input6.txt" />
+    <Text Include="input\Input7.txt" />
+    <Text Include="input\Input8.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

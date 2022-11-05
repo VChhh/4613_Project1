@@ -27,4 +27,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="input\Input1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input\Input2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input\Input3.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input\Input4.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input\Input5.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input\Input6.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input\Input7.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input\Input8.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

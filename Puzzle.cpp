@@ -1,3 +1,5 @@
+#include<iostream>
+
 #include "Puzzle.h"
 
 using namespace std;
@@ -53,9 +55,11 @@ Puzzle::Puzzle(const Puzzle& rhs) {
 bool Puzzle::isVisited(State& p1) {
 	for (State& p2 : visited) {
 		if (p1 == p2) {
+			cout << "visited";
 			return true;
 		}
 	}
+	cout << "not visited";
 	return false;
 }
 
@@ -82,42 +86,57 @@ void Puzzle::findNeighbors(vector<State>& nbs) {
 	// left
 	if (canL) {
 		State lState(cur);
+		//
+		lState.board[x0 + y0 * 4].x = x0 + 1;
+		lState.board[x0 + y0 * 4 + 1].x = x0;
 		swap(lState.board[x0 + y0 * 4], lState.board[x0 + y0 * 4 + 1]);
+		//
 		lState.stepTaken = g;
 		lState.calculateHeuristic(goal);
 		lState.fValue = lState.stepTaken + weight * lState.heuristicValue;
 		lState.path += "L";
-		queue.push(lState);
+		nbs.push_back(lState);
 	}
 	// right
 	if (canR) {
 		State RState(cur);
+		//
+		RState.board[x0 + y0 * 4].x = x0 - 1;
+		RState.board[x0 + y0 * 4 - 1].x = x0;
 		swap(RState.board[x0 + y0 * 4], RState.board[x0 + y0 * 4 - 1]);
+		//
 		RState.stepTaken = g;
 		RState.calculateHeuristic(goal);
 		RState.fValue = RState.stepTaken + weight * RState.heuristicValue;
 		RState.path += "R";
-		queue.push(RState);
+		nbs.push_back(RState);
 	}
 	// up
 	if (canU) {
 		State UState(cur);
+		//
+		UState.board[x0 + y0 * 4].y = y0 + 1;
+		UState.board[x0 + y0 * 4 + 4].y = y0;
 		swap(UState.board[x0 + y0 * 4], UState.board[x0 + y0 * 4 + 4]);
+		//
 		UState.stepTaken = g;
 		UState.calculateHeuristic(goal);
 		UState.fValue = UState.stepTaken + weight * UState.heuristicValue;
 		UState.path += "U";
-		queue.push(UState);
+		nbs.push_back(UState);
 	}
 	// down
 	if (canD) {
 		State DState(cur);
-		swap(DState.board[x0 + y0 * 4], DState.board[x0 + y0 * 4 - 1]);
+		//
+		DState.board[x0 + y0 * 4].y = y0 - 1;
+		DState.board[x0 + y0 * 4 - 4].y = y0;
+		swap(DState.board[x0 + y0 * 4], DState.board[x0 + y0 * 4 - 4]);
 		DState.stepTaken = g;
 		DState.calculateHeuristic(goal);
 		DState.fValue = DState.stepTaken + weight * DState.heuristicValue;
 		DState.path += "D";
-		queue.push(DState);
+		nbs.push_back(DState);
 	}
 }
 
@@ -128,6 +147,7 @@ string Puzzle::solve() {
 	while (!queue.empty()) {
 		// extract min
 		cur = queue.top();
+		printState();
 		visited.push_back(cur);
 		queue.pop();
 		if (cur.heuristicValue == 0) return cur.path;
@@ -145,6 +165,17 @@ string Puzzle::solve() {
 	return "no path";
 }
 
+
+void Puzzle::printState() {
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			
+			cout << cur.board[x + 4 * y].value << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
 //void Puzzle::operator=(const Puzzle& rhs) {
 //	board = rhs.board;
 //	goal = rhs.goal;

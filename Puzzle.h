@@ -16,7 +16,7 @@ struct Chess {
 struct State {
 	int heuristicValue;
 	int stepTaken;
-	int fValue;
+	float fValue;
 	std::vector<Chess> board; // 0-15
 	std::string path;
 
@@ -40,6 +40,7 @@ public:
 	bool isVisited(State&);
 	void findNeighbors(std::vector<State>&);
 	std::string solve();
+	void printState();
 
 private:
 	std::priority_queue<State, std::vector<State>, CompareState> queue;

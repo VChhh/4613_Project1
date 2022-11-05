@@ -6,7 +6,6 @@
 #define PUZZLE_H
 
 
-
 struct Chess {
 	int value;
 	int x;
@@ -34,21 +33,21 @@ struct CompareState {
 	}
 };
 
-class Puzzle{
+class Puzzle {
 public:
 	Puzzle(int aWeight, std::vector<int>& aInit, std::vector<int>& aGoal);
 	Puzzle(const Puzzle&);
 	bool isVisited(State&);
 	void findNeighbors(std::vector<State>&);
 	std::string solve();
-	
+
 private:
 	std::priority_queue<State, std::vector<State>, CompareState> queue;
 	std::vector<State> visited;
 	State cur;
 	State goal;
 	float weight;
-	
+
 };
 
 

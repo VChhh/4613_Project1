@@ -125,12 +125,12 @@ void Puzzle::findNeighbors(vector<State>& nbs) {
 // solve puzzle and return the string a path
 string Puzzle::solve() {
 	//is-goal
-	if (cur.heuristicValue == 0) return cur.path;
 	while (!queue.empty()) {
 		// extract min
 		cur = queue.top();
 		visited.push_back(cur);
 		queue.pop();
+		if (cur.heuristicValue == 0) return cur.path;
 		// TODO: add states into neighbors
 		std::vector<State> neighbors;
 		findNeighbors(neighbors);
@@ -142,7 +142,7 @@ string Puzzle::solve() {
 			}
 		}
 	}
-
+	return "no path";
 }
 
 //void Puzzle::operator=(const Puzzle& rhs) {

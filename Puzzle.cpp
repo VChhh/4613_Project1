@@ -148,6 +148,8 @@ string Puzzle::solve() {
 		// extract min
 		cur = queue.top();
 		printState();
+		printQueue();
+		
 		visited.push_back(cur);
 		queue.pop();
 		if (cur.heuristicValue == 0) return cur.path;
@@ -167,6 +169,7 @@ string Puzzle::solve() {
 
 
 void Puzzle::printState() {
+	cout << endl;
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {
 			
@@ -175,6 +178,15 @@ void Puzzle::printState() {
 		cout << endl;
 	}
 	cout << endl;
+}
+
+void Puzzle::printQueue() {
+	priority_queue<State, std::vector<State>, CompareState> g = queue;
+	while (!g.empty()) {
+		cout << " " << g.top().heuristicValue;
+		g.pop();
+	}
+	cout << '\n';
 }
 //void Puzzle::operator=(const Puzzle& rhs) {
 //	board = rhs.board;

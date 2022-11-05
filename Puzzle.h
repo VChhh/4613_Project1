@@ -20,7 +20,7 @@ struct State {
 	std::vector<Chess> board; // 0-15
 	std::string path;
 
-	State() : heuristicValue(16), stepTaken(0), fValue(0), path("") {};
+	State() : heuristicValue(16), stepTaken(0), fValue(0.0f), path("") {};
 	State(int h, std::vector<Chess> c, int s, int f) : heuristicValue(h), board(c), stepTaken(s), fValue(f) {};
 	void calculateHeuristic(const State&);
 	inline bool operator==(const State&);
@@ -29,7 +29,7 @@ struct State {
 struct CompareState {
 	bool operator()(State const& p1, State const& p2)
 	{
-		return p1.fValue < p2.fValue;
+		return p1.fValue > p2.fValue;
 	}
 };
 
@@ -41,6 +41,7 @@ public:
 	void findNeighbors(std::vector<State>&);
 	std::string solve();
 	void printState();
+	void printQueue();
 
 private:
 	std::priority_queue<State, std::vector<State>, CompareState> queue;

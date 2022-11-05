@@ -18,6 +18,9 @@ void State::calculateHeuristic(const State& g) {
 	heuristicValue = res;
 }
 
+void State::calculateFValue(float weight) {
+	fValue = (float)stepTaken + weight * (float)heuristicValue;
+}
 bool State::operator==(const State& rhs) {
 	for (int i = 0; i < 16; i++) {
 		if (board[i].value != rhs.board[i].value) {
@@ -27,17 +30,57 @@ bool State::operator==(const State& rhs) {
 	return true;
 }
 
+
+ostream& operator<<(ostream& os, const Puzzle& p) {
+	os << "**************************************" << endl;
+	// init
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			os << p.init.board[x + 4 * y].value << " ";
+		}
+		os << endl;
+	}
+	os << endl;
+	// goal
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			os << p.goal.board[x + 4 * y].value << " ";
+		}
+		os << endl;
+	}
+	os << endl;
+	// weight
+	os << p.weight << endl;
+	// shallowest depth
+	os << p.cur.path.length() / 2 << endl;
+	// total nodes
+	os << p.totalNodes << endl;
+	// solution
+	os << p.cur.path << endl;
+	// f(n) value path
+	for (float i : p.cur.fValuePath) os << i << " ";
+	os << endl;
+	return os;
+
+
+}
+
 // constructor store weight, init, and goal from input
-Puzzle::Puzzle(int aWeight, vector<int>& aInit, vector<int>& aGoal): weight(aWeight) {
+Puzzle::Puzzle(float aWeight, vector<int>& aInit, vector<int>& aGoal):
+	weight(aWeight), totalNodes(0)
+{
 	cur = State();
 	goal = State();
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {
+			init.board.push_back(Chess(aInit[x + y * 4], x, y));
 			cur.board.push_back(Chess(aInit[x + y * 4], x, y));
 			goal.board.push_back(Chess(aGoal[x + y * 4], x, y));
 		}
 	}
 	cur.calculateHeuristic(goal);
+	cur.calculateFValue(weight);
+	cur.fValuePath.push_back(cur.fValue);
 	goal.calculateHeuristic(goal);
 	queue.push(cur);
 }
@@ -55,14 +98,13 @@ Puzzle::Puzzle(const Puzzle& rhs) {
 bool Puzzle::isVisited(State& p1) {
 	for (State& p2 : visited) {
 		if (p1 == p2) {
-			cout << "visited";
 			return true;
 		}
 	}
-	cout << "not visited";
 	return false;
 }
 
+// find neighbor states
 void Puzzle::findNeighbors(vector<State>& nbs) {
 	bool canL = true, canR = true, canU = true, canD = true;
 	int x0 = 0, y0 = 0;
@@ -76,83 +118,92 @@ void Puzzle::findNeighbors(vector<State>& nbs) {
 		if (c.value == 0) {
 			x0 = c.x;
 			y0 = c.y;
-			if (x0 == 0) canR = false;
-			if (x0 == 3) canL = false;
-			if (y0 == 0) canD = false;
-			if (y0 == 3) canU = false;
+			if (x0 == 0) canL = false;
+			if (x0 == 3) canR = false;
+			if (y0 == 0) canU = false;
+			if (y0 == 3) canD = false;
 			break;
 		}
 	}
 	// left
 	if (canL) {
-		State lState(cur);
+		State LState(cur);
 		//
-		lState.board[x0 + y0 * 4].x = x0 + 1;
-		lState.board[x0 + y0 * 4 + 1].x = x0;
-		swap(lState.board[x0 + y0 * 4], lState.board[x0 + y0 * 4 + 1]);
+		LState.board[x0 + y0 * 4].x = x0 - 1;
+		LState.board[x0 + y0 * 4 - 1].x = x0;
+		swap(LState.board[x0 + y0 * 4], LState.board[x0 + y0 * 4 - 1]);
 		//
-		lState.stepTaken = g;
-		lState.calculateHeuristic(goal);
-		lState.fValue = lState.stepTaken + weight * lState.heuristicValue;
-		lState.path += "L";
-		nbs.push_back(lState);
+		LState.stepTaken = g;
+		LState.calculateHeuristic(goal);
+		LState.calculateFValue(weight);
+		LState.path += "L ";
+		LState.fValuePath.push_back(LState.fValue);
+		nbs.push_back(LState);
+
 	}
 	// right
 	if (canR) {
 		State RState(cur);
 		//
-		RState.board[x0 + y0 * 4].x = x0 - 1;
-		RState.board[x0 + y0 * 4 - 1].x = x0;
-		swap(RState.board[x0 + y0 * 4], RState.board[x0 + y0 * 4 - 1]);
+		RState.board[x0 + y0 * 4].x = x0 + 1;
+		RState.board[x0 + y0 * 4 + 1].x = x0;
+		swap(RState.board[x0 + y0 * 4], RState.board[x0 + y0 * 4 + 1]);
 		//
 		RState.stepTaken = g;
 		RState.calculateHeuristic(goal);
-		RState.fValue = RState.stepTaken + weight * RState.heuristicValue;
-		RState.path += "R";
+		RState.calculateFValue(weight);
+		RState.path += "R ";
+		RState.fValuePath.push_back(RState.fValue);
 		nbs.push_back(RState);
 	}
 	// up
 	if (canU) {
 		State UState(cur);
 		//
-		UState.board[x0 + y0 * 4].y = y0 + 1;
-		UState.board[x0 + y0 * 4 + 4].y = y0;
-		swap(UState.board[x0 + y0 * 4], UState.board[x0 + y0 * 4 + 4]);
+		UState.board[x0 + y0 * 4].y = y0 - 1;
+		UState.board[x0 + y0 * 4 - 4].y = y0;
+		swap(UState.board[x0 + y0 * 4], UState.board[x0 + y0 * 4 - 4]);
 		//
 		UState.stepTaken = g;
 		UState.calculateHeuristic(goal);
-		UState.fValue = UState.stepTaken + weight * UState.heuristicValue;
-		UState.path += "U";
+		UState.calculateFValue(weight);
+		UState.path += "U ";
+		UState.fValuePath.push_back(UState.fValue);
 		nbs.push_back(UState);
+
 	}
 	// down
 	if (canD) {
 		State DState(cur);
 		//
-		DState.board[x0 + y0 * 4].y = y0 - 1;
-		DState.board[x0 + y0 * 4 - 4].y = y0;
-		swap(DState.board[x0 + y0 * 4], DState.board[x0 + y0 * 4 - 4]);
+		DState.board[x0 + y0 * 4].y = y0 + 1;
+		DState.board[x0 + y0 * 4 + 4].y = y0;
+		swap(DState.board[x0 + y0 * 4], DState.board[x0 + y0 * 4 + 4]);
+		//
 		DState.stepTaken = g;
 		DState.calculateHeuristic(goal);
-		DState.fValue = DState.stepTaken + weight * DState.heuristicValue;
-		DState.path += "D";
+		DState.calculateFValue(weight);
+		DState.path += "D ";
+		DState.fValuePath.push_back(DState.fValue);
 		nbs.push_back(DState);
 	}
 }
 
 
 // solve puzzle and return the string a path
-string Puzzle::solve() {
+void Puzzle::solve() {
 	//is-goal
 	while (!queue.empty()) {
+		// count nodes number
+		totalNodes++;
 		// extract min
 		cur = queue.top();
-		printState();
-		printQueue();
+		//printState();
+		//printQueue();
 		
 		visited.push_back(cur);
 		queue.pop();
-		if (cur.heuristicValue == 0) return cur.path;
+		if (cur.heuristicValue == 0) return;
 		// TODO: add states into neighbors
 		std::vector<State> neighbors;
 		findNeighbors(neighbors);
@@ -164,7 +215,6 @@ string Puzzle::solve() {
 			}
 		}
 	}
-	return "no path";
 }
 
 
@@ -181,34 +231,10 @@ void Puzzle::printState() {
 }
 
 void Puzzle::printQueue() {
-	priority_queue<State, std::vector<State>, CompareState> g = queue;
+	priority_queue<State> g = queue;
 	while (!g.empty()) {
-		cout << " " << g.top().heuristicValue;
+		cout << " " << g.top().fValue;
 		g.pop();
 	}
 	cout << '\n';
 }
-//void Puzzle::operator=(const Puzzle& rhs) {
-//	board = rhs.board;
-//	goal = rhs.goal;
-//	heuristic = rhs.heuristic;
-//}
-
-//void Puzzle::left() {
-//
-//}
-//void Puzzle::right() {
-//
-//}
-//
-//void Puzzle::up() {
-//
-//}
-//
-//void Puzzle::down() {
-//
-//} 
-//
-//void Puzzle::solve(std::vector<std::string>& path, int& d) {
-//
-//}

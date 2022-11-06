@@ -1,11 +1,15 @@
 #include<iostream>
 #include<fstream>
+#include<format>
+#include<string>
+#include<string_view>
 #include "Puzzle.h"
 
 
 void readInput() {
 	int temp;
 	for (int i = 1; i <= 8; i++) {
+		std::cout << "\n[ Input" << std::to_string(i) << " ]";
 		float weight = 1.0f;
 		std::vector<int> init;
 		std::vector<int> goal;

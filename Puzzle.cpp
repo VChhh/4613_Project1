@@ -10,7 +10,7 @@ void State::calculateHeuristic(const State& g) {
 	int res = 0;
 	for (const Chess& i : board) {
 		for (const Chess& j : g.board) {
-			if (i.value == j.value) {
+			if (i.value == j.value && i.value != 0) {
 				res += max(abs(i.x - j.x), abs(i.y - j.y));
 			}
 		}

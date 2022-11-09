@@ -88,6 +88,7 @@ Puzzle::Puzzle(float aWeight, vector<int>& aInit, vector<int>& aGoal):
 
 	// push initial state into priority queue
 	queue.push(cur);
+	totalNodes++;
 }
 
 // copy constructor
@@ -207,7 +208,6 @@ void Puzzle::solve() {
 	//is-goal
 	while (!queue.empty()) {
 		// count nodes number
-		totalNodes++;
 		// extract min
 		cur = queue.top();	
 		visited.push_back(cur);
@@ -221,6 +221,7 @@ void Puzzle::solve() {
 		// add unvisited neighbors into priority queue
 		for (State& n : neighbors) {
 			if (!isVisited(n)) {
+				totalNodes++;
 				queue.push(n);
 			}
 		}

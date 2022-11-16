@@ -9,6 +9,12 @@
 
 void readInput() {
 	int temp;
+	if (_mkdir("output") == -1) {
+		std::cerr << "Error\n";
+	}
+	else {
+		std::cout << "Folder created\n";
+	}
 	for (int i = 1; i <= 8; i++) {
 		std::cout << "\n[ Input" << std::to_string(i) << " ]\n";
 		float weight = 1.0f;
@@ -36,12 +42,7 @@ void readInput() {
 		file.close();
 
 		// create the output file
-		if (_mkdir("output") == -1) {
-			std::cerr << "Error\n";
-		}
-		else {
-			std::cout << "Folder created\n";
-		}
+		
 
 		std::ofstream ofs;
 		ofs.open("output/output" + std::to_string(i) + ".txt");

@@ -35,7 +35,6 @@ bool State::operator==(const State& rhs) {
 
 // output the result in format
 ostream& operator<<(ostream& os, const Puzzle& p) {
-	os << "**************************************" << endl;
 	// init
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {

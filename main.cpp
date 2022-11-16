@@ -3,13 +3,14 @@
 #include<format>
 #include<string>
 #include<string_view>
+#include<vector>
+#include<direct.h>
 #include "Puzzle.h"
-
 
 void readInput() {
 	int temp;
 	for (int i = 1; i <= 8; i++) {
-		std::cout << "\n[ Input" << std::to_string(i) << " ]";
+		std::cout << "\n[ Input" << std::to_string(i) << " ]\n";
 		float weight = 1.0f;
 		std::vector<int> init;
 		std::vector<int> goal;
@@ -32,13 +33,30 @@ void readInput() {
 			goal.push_back(temp);
 		}
 
+		file.close();
+
+		// create the output file
+		if (_mkdir("output") == -1) {
+			std::cerr << "Error\n";
+		}
+		else {
+			std::cout << "Folder created\n";
+		}
+
+		std::ofstream ofs;
+		ofs.open("output/output" + std::to_string(i) + ".txt");
+
 		// declare Puzzle object and solve it
 		Puzzle p(weight, init, goal);
+
 		p.solve();
 
 		// print the output
+		ofs << p;
 		std::cout << p;
-		file.close();
+		std::cout << "**************************************" << std::endl;
+
+		ofs.close();
 	}
 }
 
